@@ -15,7 +15,7 @@ import javax.persistence.*
  */
 @Entity
 @Table(name = "user")
-open class User {
+open class User() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -34,5 +34,19 @@ open class User {
     open var finishedRegistration: Boolean? = false
 
     @Column(name = "additional_security", nullable = false)
-    open var requiredAdditionalSecurity: String? = null
+    open var requiredAdditionalSecurity: Boolean? = null
+
+    constructor(
+        username: String,
+        hashedPassword: String,
+        finishedRegistration: Boolean,
+        secret: String?,
+        requiredAdditionalSecurity: Boolean
+    ) : this() {
+        this.username = username
+        this.hashedPassword = hashedPassword
+        this.finishedRegistration = finishedRegistration
+        this.secret = secret
+        this.requiredAdditionalSecurity = requiredAdditionalSecurity
+    }
 }

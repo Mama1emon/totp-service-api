@@ -1,0 +1,1 @@
+package com.khokhlov.totp.adapter.input.model/** * Перечисление возможных статусов ответа сервера на запрос регистрации */enum class Status {    /**     * Регистрация успешно пройдена     */    OK,    /**     * Имя пользователя уже занято     */    USERNAME_TAKEN,    /**     * Слабый пароль     */    WEAK_PASSWORD}
