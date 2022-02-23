@@ -14,7 +14,7 @@ import javax.persistence.*
  *                                      По-умолчанию принимает значение false.
  */
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 open class User() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
