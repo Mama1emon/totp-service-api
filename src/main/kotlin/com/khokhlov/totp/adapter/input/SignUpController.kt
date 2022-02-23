@@ -25,6 +25,8 @@ class SignUpController(private val signUpService: SignUpUseCase) {
      * @param username   имя пользователя
      * @param password   пароль
      * @param enableTotp флаг, включения 2fa аунтефикации
+     *
+     * @return ответ на запрос регистрации [SignUpResponse]
      */
     @PostMapping("/signup")
     fun signUp(
@@ -34,7 +36,7 @@ class SignUpController(private val signUpService: SignUpUseCase) {
     ): SignUpResponse {
         val secret: String?
         try {
-            secret = signUpService.signUp(username, password, enableTotp).secret
+            secret = signUpService.signUp(username, password, enableTotp)
         } catch (e: UserAlreadyExistException) {
             return SignUpResponse(Status.USERNAME_TAKEN)
         } catch (e: WeakPasswordException) {
@@ -61,5 +63,7 @@ class SignUpController(private val signUpService: SignUpUseCase) {
     fun signUpConfirmSecret(
         @RequestParam("username") @NotBlank username: String,
         @RequestParam("code") @NotBlank code: String
-    ) = signUpService.confirmSecret(username, code)
+    ) {
+        signUpService.confirmSecret(username, code)
+    }
 }
