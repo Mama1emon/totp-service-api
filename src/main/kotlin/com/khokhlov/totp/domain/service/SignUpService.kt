@@ -1,14 +1,11 @@
 package com.khokhlov.totp.domain.service
 
-import com.codahale.passpol.PasswordPolicy
-import com.codahale.passpol.Status
 import com.khokhlov.totp.adapter.input.port.SignUpUseCase
 import com.khokhlov.totp.adapter.output.UserRepository
-import com.khokhlov.totp.adapter.output.model.User
+import com.khokhlov.totp.adapter.output.mapper.SignUpAccountMapper
+import com.khokhlov.totp.domain.model.SignUpAccount
 import com.khokhlov.totp.domain.model.UserAlreadyExistException
-import com.khokhlov.totp.domain.model.WeakPasswordException
 import org.jboss.aerogear.security.otp.Totp
-import org.jboss.aerogear.security.otp.api.Base32
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
@@ -22,46 +19,19 @@ import org.springframework.stereotype.Service
 @Service
 class SignUpService(
     private val passwordEncoder: PasswordEncoder,
-    private val passwordPolicy: PasswordPolicy,
     private val userRepository: UserRepository
 ) : SignUpUseCase {
 
-    override fun signUp(username: String, password: String, enableTotp: Boolean): String? {
+    override fun signUp(username: String, password: String, enableTotp: Boolean): SignUpAccount {
         // Проверка на существование пользователя с таким именем
         if (userRepository.existsByUsernameEquals(username)) {
             throw UserAlreadyExistException()
         }
 
-        // Проверка пароля на заданные требования
-        if (passwordPolicy.check(password) != Status.OK) {
-            throw WeakPasswordException()
-        }
+        val account = SignUpAccount(username, passwordEncoder.encode(password), enableTotp)
+        userRepository.save(SignUpAccountMapper.convert(account))
 
-        var secret: String? = null
-        if (enableTotp) {
-            secret = Base32.random()
-            userRepository.save(
-                User(
-                    username = username,
-                    hashedPassword = passwordEncoder.encode(password),
-                    finishedRegistration = false,
-                    secret = secret,
-                    requiredAdditionalSecurity = false
-                )
-            )
-        } else {
-            userRepository.save(
-                User(
-                    username = username,
-                    hashedPassword = passwordEncoder.encode(password),
-                    finishedRegistration = true,
-                    secret = null,
-                    requiredAdditionalSecurity = false
-                )
-            )
-        }
-
-        return secret
+        return account
     }
 
     override fun confirmSecret(username: String, code: String): Boolean {

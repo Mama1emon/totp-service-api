@@ -1,5 +1,7 @@
 package com.khokhlov.totp.adapter.input.port
 
+import com.khokhlov.totp.domain.model.SignUpAccount
+
 /**
  * Интерфейс use-case регистрации пользователя
  */
@@ -14,7 +16,7 @@ interface SignUpUseCase {
      *
      * @return сгенерированный секрет
      */
-    fun signUp(username: String, password: String, enableTotp: Boolean): String?
+    fun signUp(username: String, password: String, enableTotp: Boolean): SignUpAccount
 
     /**
      * Подтверждение добавления генератора одноразовых паролей в приложении

@@ -34,7 +34,7 @@ class SignUpController(private val signUpService: SignUpUseCase) {
     ): SignUpResponse {
         val secret: String?
         try {
-            secret = signUpService.signUp(username, password, enableTotp)
+            secret = signUpService.signUp(username, password, enableTotp).secret
         } catch (e: UserAlreadyExistException) {
             return SignUpResponse(Status.USERNAME_TAKEN)
         } catch (e: WeakPasswordException) {

@@ -1,7 +1,5 @@
 package com.khokhlov.totp.config
 
-import com.codahale.passpol.BreachDatabase
-import com.codahale.passpol.PasswordPolicy
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -50,10 +48,4 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
      */
     @Bean
     fun passwordEncoder() = Argon2PasswordEncoder(16, 32, 8, 1 shl 16, 4)
-
-    /**
-     * Функция для проверки требований пароля
-     */
-    @Bean
-    fun passwordPolicy() = PasswordPolicy(BreachDatabase.top100K(), 8, 256)
 }

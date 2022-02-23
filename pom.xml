@@ -81,11 +81,6 @@
 			<version>${bouncycastle.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.codahale</groupId>
-			<artifactId>passpol</artifactId>
-			<version>${codahale.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.jboss.aerogear</groupId>
 			<artifactId>aerogear-otp-java</artifactId>
 			<version>1.0.0</version>
