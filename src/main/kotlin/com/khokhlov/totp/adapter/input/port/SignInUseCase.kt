@@ -1,6 +1,6 @@
 package com.khokhlov.totp.adapter.input.port
 
-import com.khokhlov.totp.domain.model.AuthenticationFlow
+import com.khokhlov.totp.domain.model.SignInAccount
 
 /**
  * Интерфейс use-case авторизации
@@ -8,7 +8,7 @@ import com.khokhlov.totp.domain.model.AuthenticationFlow
 interface SignInUseCase {
 
     /**
-     * Метод авторизации с помощью [username] и [password]
+     * Получить данные о пользователе по имени [username], если он прошел регистрацию
      */
-    fun signIn(username: String, password: String): AuthenticationFlow
+    fun getSignInInfo(username: String): SignInAccount?
 }
