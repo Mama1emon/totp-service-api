@@ -24,7 +24,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
-        http.csrf().disable()
+        http.csrf { it.disable() }
             .authorizeRequests { registry ->
                 registry.antMatchers(
                     "/authenticate", "/signin", "/verify-totp", "/verify-totp-additional-security", "/signup",

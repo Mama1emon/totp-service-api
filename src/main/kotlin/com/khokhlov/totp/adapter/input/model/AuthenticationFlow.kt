@@ -1,4 +1,4 @@
-package com.khokhlov.totp.domain.model
+package com.khokhlov.totp.adapter.input.model
 
 /**
  * Состояния аунтефикации

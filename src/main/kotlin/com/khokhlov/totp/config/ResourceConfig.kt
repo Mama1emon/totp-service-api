@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit
 
 @Configuration
 class ResourceConfig : WebMvcConfigurer {
+
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         registry.addResourceHandler("/", "/index.html")
             .addResourceLocations("classpath:/static/")
