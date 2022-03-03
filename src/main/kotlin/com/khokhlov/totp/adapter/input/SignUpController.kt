@@ -63,7 +63,5 @@ class SignUpController(private val signUpService: SignUpUseCase) {
     fun signUpConfirmSecret(
         @RequestParam("username") @NotBlank username: String,
         @RequestParam("code") @NotBlank code: String
-    ) {
-        signUpService.confirmSecret(username, code)
-    }
+    ) = signUpService.confirmSecret(username, code)
 }

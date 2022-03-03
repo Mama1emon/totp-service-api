@@ -1,5 +1,7 @@
 package com.khokhlov.totp.adapter.input.port
 
+import org.springframework.transaction.annotation.Transactional
+
 /**
  * Интерфейс use-case регистрации пользователя
  */
@@ -25,5 +27,6 @@ interface SignUpUseCase {
      * @return true - проверка пройдена
      *         false - проверка не пройдена
      */
+    @Transactional
     fun confirmSecret(username: String, code: String): Boolean
 }

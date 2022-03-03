@@ -39,11 +39,8 @@ class SignUpService(
     override fun confirmSecret(username: String, code: String): Boolean {
         val user = userRepository.findByUsernameEquals(username)
 
-        return if (user != null) {
-            val totp = Totp(user.secret)
-            if (totp.verify(code)) {
-                user.finishedRegistration = true
-            }
+        return if (user != null && Totp(user.secret).verify(code)) {
+            user.finishedRegistration = true
             true
         } else {
             false
