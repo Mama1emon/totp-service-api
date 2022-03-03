@@ -31,18 +31,16 @@ class SignInController(
 ) {
 
     /**
-     * Проверить аунтефикацию пользователя
-     *
-     * @param request объект запроса
+     * Проверить аунтефикацию пользователя, используя данные из сессии запроса [request]
      */
     @GetMapping("/authenticate")
-    fun authenticate(request: HttpServletRequest): AuthenticationFlow {
+    fun authenticate(request: HttpServletRequest) =
         if (SecurityContextHolder.getContext().authentication is UserAuthentication) {
-            return AuthenticationFlow.AUTHENTICATED
+            AuthenticationFlow.AUTHENTICATED
+        } else {
+            request.getSession(false)?.let(HttpSession::invalidate)
+            AuthenticationFlow.NOT_AUTHENTICATED
         }
-        request.getSession(false).apply { invalidate() }
-        return AuthenticationFlow.NOT_AUTHENTICATED
-    }
 
     /**
      * Аунтефицировать пользователя по имени [username] и паролю [password]

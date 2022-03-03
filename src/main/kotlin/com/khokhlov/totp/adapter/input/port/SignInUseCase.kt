@@ -1,6 +1,7 @@
 package com.khokhlov.totp.adapter.input.port
 
 import com.khokhlov.totp.domain.model.SignInAccount
+import org.springframework.transaction.annotation.Transactional
 
 /**
  * Интерфейс use-case авторизации
@@ -20,10 +21,12 @@ interface SignInUseCase {
     /**
      * Установить пользователю [userId] флаг для прохождения доп. этапов проверки
      */
+    @Transactional
     fun setRequiredAdditionalSecurity(userId: Long)
 
     /**
      * Удалить у пользователя [userId] флаг для прохождения доп. этапов проверок
      */
+    @Transactional
     fun clearRequiredAdditionalSecurity(userId: Long)
 }
