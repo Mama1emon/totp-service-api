@@ -3,8 +3,8 @@ package com.khokhlov.totp.adapter.input
 import com.khokhlov.totp.adapter.input.model.AuthenticationFlow
 import com.khokhlov.totp.adapter.input.port.SignInUseCase
 import com.khokhlov.totp.config.AuthUserDetail
-import com.khokhlov.totp.config.CustomTotp
 import com.khokhlov.totp.config.UserAuthentication
+import com.khokhlov.totp.config.verify
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -76,7 +76,7 @@ class SignInController(
     }
 
     /**
-     * Проверить одноразовый код [code], используя аунтефикационные из сессии [httpSession]
+     * Проверить одноразовый код [code], используя аунтефикационные данные из сессии [httpSession]
      */
     @PostMapping("/verify-totp")
     fun verifyTotp(@RequestParam code: String?, httpSession: HttpSession): ResponseEntity<AuthenticationFlow> {
@@ -90,7 +90,7 @@ class SignInController(
 
         val secret = authInfo.secret
         if (secret?.isNotBlank() == true && code?.isNotBlank() == true) {
-            val isValidCode = CustomTotp(secret).verify(code, 2, 2).isValid
+            val isValidCode = secret.verify(code, 2, 2).isValid
             return if (isValidCode) {
                 SecurityContextHolder.getContext().authentication = userAuthentication
                 ResponseEntity.ok().body(AuthenticationFlow.AUTHENTICATED)
@@ -125,11 +125,9 @@ class SignInController(
         if (secret?.isNotBlank() == true &&
             code1?.isNotBlank() == true && code2?.isNotBlank() == true && code3?.isNotBlank() == true
         ) {
-            val totp = CustomTotp(secret)
-
             // check 25 hours into the past and future.
             val noOf30SecondsIntervals = TimeUnit.HOURS.toSeconds(25) / 30
-            val result = totp.verify(listOf(code1, code2, code3), noOf30SecondsIntervals, noOf30SecondsIntervals)
+            val result = secret.verify(listOf(code1, code2, code3), noOf30SecondsIntervals, noOf30SecondsIntervals)
             if (result.isValid) {
                 if (result.shift > 2 || result.shift < -2) {
                     httpSession.setAttribute(SESSION_KEY_TOTP_SHIFT, result.shift)
