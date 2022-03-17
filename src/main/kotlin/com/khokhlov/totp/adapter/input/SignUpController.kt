@@ -59,7 +59,7 @@ class SignUpController(private val signUpService: SignUpUseCase) {
      * @return true - проверка пройдена
      *         false - проверка не пройдена
      */
-    @PostMapping("/signup-confirm-secret")
+    @PostMapping("/signup-confirmation")
     fun signUpConfirmSecret(
         @RequestParam("username") @NotBlank username: String,
         @RequestParam("code") @NotBlank code: String

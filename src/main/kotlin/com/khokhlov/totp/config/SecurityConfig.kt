@@ -27,8 +27,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
         http.csrf { it.disable() }
             .authorizeRequests { registry ->
                 registry.antMatchers(
-                    "/authenticate", "/signin", "/verify-totp", "/verify-totp-additional-security", "/signup",
-                    "/signup-confirm-secret"
+                    "/authentication", "/signin", "/signin-confirmation", "/signin-additional-confirmation", "/signup",
+                    "/signup-confirmation"
                 ).permitAll()
                 registry.anyRequest().authenticated()
             }

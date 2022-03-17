@@ -25,15 +25,12 @@ import kotlin.math.abs
  * @property passwordEncoder энкодер для шифрования пароля
  */
 @RestController
-class SignInController(
-    private val signInService: SignInUseCase,
-    private val passwordEncoder: PasswordEncoder
-) {
+class SignInController(private val signInService: SignInUseCase, private val passwordEncoder: PasswordEncoder) {
 
     /**
      * Проверить аунтефикацию пользователя, используя данные из сессии запроса [request]
      */
-    @GetMapping("/authenticate")
+    @GetMapping("/authentication")
     fun authenticate(request: HttpServletRequest) =
         if (SecurityContextHolder.getContext().authentication is UserAuthentication) {
             AuthenticationFlow.AUTHENTICATED
@@ -78,7 +75,7 @@ class SignInController(
     /**
      * Проверить одноразовый код [code], используя аунтефикационные данные из сессии [httpSession]
      */
-    @PostMapping("/verify-totp")
+    @PostMapping("/signin-confirmation")
     fun verifyTotp(@RequestParam code: String?, httpSession: HttpSession): ResponseEntity<AuthenticationFlow> {
         val userAuthentication = httpSession.getAttribute(SESSION_KEY_USER_AUTHENTICATION) as? UserAuthentication
             ?: return ResponseEntity.ok().body(AuthenticationFlow.NOT_AUTHENTICATED)
@@ -106,7 +103,7 @@ class SignInController(
      * Проверить одноразовые кода [code1], [code2], [code3], введенные для прохождения доп. этапов проверки.
      * Также используется сессия [httpSession] для получения аунтефикационных данных пользователя.
      */
-    @PostMapping("/verify-totp-additional-security")
+    @PostMapping("/signin-additional-confirmation")
     fun verifyTotpAdditionalSecurity(
         @RequestParam code1: String?,
         @RequestParam code2: String?,
@@ -145,7 +142,7 @@ class SignInController(
      * Получить разницу во времени между часами клиента и пользователя,
      * используя аунтефикационные данные из сессии [httpSession]
      */
-    @GetMapping("/totp-shift")
+    @GetMapping("/time-shift")
     fun getTotpShift(httpSession: HttpSession): String? {
         val shift = httpSession.getAttribute(SESSION_KEY_TOTP_SHIFT) as? Long ?: return null
         httpSession.removeAttribute(SESSION_KEY_TOTP_SHIFT)
@@ -157,19 +154,19 @@ class SignInController(
         val seconds = total30Seconds % 2 != 0L
 
         if (hours == 1L) {
-            out.append("1 hour ")
+            out.append("1 час ")
         } else if (hours > 1) {
-            out.append(hours).append(" hours ")
+            out.append(hours).append(" часа ")
         }
 
         if (minutes == 1L) {
-            out.append("1 minute ")
+            out.append("1 минута ")
         } else if (minutes > 1) {
-            out.append(minutes).append(" minutes ")
+            out.append(minutes).append(" минуты ")
         }
 
         if (seconds) {
-            out.append("30 seconds ")
+            out.append("30 секунд ")
         }
 
         return out.append(if (shift < 0) "behind" else "ahead").toString()
