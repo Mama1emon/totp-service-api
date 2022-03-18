@@ -143,33 +143,20 @@ class SignInController(private val signInService: SignInUseCase, private val pas
      * используя аунтефикационные данные из сессии [httpSession]
      */
     @GetMapping("/time-shift")
-    fun getTotpShift(httpSession: HttpSession): String? {
-        val shift = httpSession.getAttribute(SESSION_KEY_TOTP_SHIFT) as? Long ?: return null
-        httpSession.removeAttribute(SESSION_KEY_TOTP_SHIFT)
-        val out = StringBuilder()
-        var total30Seconds = abs(shift).toInt().toLong()
-        val hours = total30Seconds / 120
-        total30Seconds %= 120
-        val minutes = total30Seconds / 2
-        val seconds = total30Seconds % 2 != 0L
+    fun getTotpShift(httpSession: HttpSession): String {
+        var shift = (httpSession.getAttribute(SESSION_KEY_TOTP_SHIFT) as? Long)?.let {
+            httpSession.removeAttribute(SESSION_KEY_TOTP_SHIFT)
+            return@let abs(it)
+        } ?: return ""
 
-        if (hours == 1L) {
-            out.append("1 час ")
-        } else if (hours > 1) {
-            out.append(hours).append(" часа ")
-        }
+        val shiftState = if (shift > 0) "отстаёт от серверного" else "опережает серверное"
+        val hours = shift / 120
+        shift %= 120
+        val minutes = shift / 2
+        val seconds = shift % 2 != 0L
 
-        if (minutes == 1L) {
-            out.append("1 минута ")
-        } else if (minutes > 1) {
-            out.append(minutes).append(" минуты ")
-        }
-
-        if (seconds) {
-            out.append("30 секунд ")
-        }
-
-        return out.append(if (shift < 0) "behind" else "ahead").toString()
+        return "Время устройства, генерирующее TOTP-коды, $shiftState на ${hours}ч. ${minutes}м." +
+                if (seconds) " 30c." else ""
     }
 
     /**
